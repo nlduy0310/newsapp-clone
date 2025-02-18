@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "reset-db": "npx sequelize-cli db:drop && npx sequelize-cli db:create && npm run sync-models && npm run db-seed-all",
+    "reset-db": "node scripts/resetDB.js && npm run db-seed-all",
     "sync-models": "node scripts/syncModels.js",
     "db-seed-all": "npx sequelize-cli db:seed:all",
     "db-unseed-all": "npx sequelize-cli db:seed:undo:all"
