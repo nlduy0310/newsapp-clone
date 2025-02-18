@@ -1,0 +1,646 @@
+<link rel="stylesheet" href="/css/profile.css" />
+<link rel="stylesheet" href="/css/general.css" />
+<div id="container-0">
+  <div id="subscribe-container">
+    <div>
+      <img src="/img/icons/exit.png" alt="" id="exit--subscribe-container" onclick="exitSubscribe()" />
+      <img src="/img/icons/subscriber.png" alt="" id="subscribe-icon" />
+      <h3>
+        Đăng ký Premium
+      </h3>
+      <p>
+        Khi đăng ký Premium, quý đọc giả sẽ có những quyền lợi sau (7 ngày):
+      </p>
+      <ul>
+        <li>
+          Được phép xem & download ấn bản (.pdf) một số bài viết premium.
+        </li>
+        <li>
+          Các bài viết premium được ưu tiên hiển thị trước trong kết quả khi xem
+          danh sách hoặc tìm kiếm bài viết.
+        </li>
+      </ul>
+      <form action="/users/premium" method="post">
+        <button id="buy-premium--btn" onclick="buyPremium()">
+          Mua ngay
+        </button>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="container-1">
+    <div>
+      <form action="#" method="get">
+        <label for="profile-pic">
+          <img src="/img/icons/user.png" alt="" class="img-avatar img-avatar--profile" />
+        </label>
+        <input id="profile-pic" type="file" name="profile-pic" accept="image/*" style="display:none;" onchange="uploadImgUser()" />
+      </form>
+      <button id="logout-btn" onclick="">
+        <a href="/users/logout" style="color: white;">Đăng xuất</a>
+        <span></span>
+      </button>
+    </div>
+
+    <div>
+      {{#with user}}
+      <div class="username--profile username">
+        {{username}}
+      </div>
+      {{/with}}
+      <div id="roles">
+        {{#if writer}}
+        Phóng viên
+        {{else}}
+        {{#if editor}}
+        Biên tập viên
+        {{else}}
+        {{#if admin}}
+        Quản trị viên
+        {{else}}
+        Người đọc
+        {{/if}}
+        {{/if}}
+        {{/if}}
+      </div>
+
+      {{#if writer}}
+      {{else}}
+      {{#if editor}}
+      {{else}}
+      {{#if admin}}
+      {{else}}
+      {{#unless premium}}
+      <form action="/users/registerPremium" method="POST">
+        <input type="hidden" name="days" value="7">
+        <button id="subscribe-btn">
+          Đăng ký
+        </button>
+      </form>
+      {{/unless}}
+
+      {{#with premium}}
+      <div id="premium-display">
+        <div>
+          <img src="/img/icons/subscriber.png" alt="" />
+          <p>
+            Premium
+          </p>
+        </div>
+        <div>
+          Ngày hết hạn {{ convertToVietnameseDateTime validUntil }}
+        </div>
+      </div>
+      {{/with}}
+      {{/if}}
+      {{/if}}
+      {{/if}}
+    </div>
+  </div>
+
+  <div class="container-2">
+    <div class="current-section profile-section" onclick="changeSection(0)">
+      <p>
+        Thông tin cá nhân
+      </p>
+      <div class="vertical-line-animate">
+
+      </div>
+    </div>
+    {{#if writer}}
+    <div class="profile-section" onclick="changeSection(1)">
+      <p>
+        Bài viết của tôi
+      </p>
+      <div class="vertical-line-animate">
+
+      </div>
+    </div>
+    {{else}}
+    {{#if editor}}
+    <div class="profile-section" onclick="changeSection(1)">
+      <p>
+        Danh sách duyệt
+      </p>
+      <div class="vertical-line-animate">
+
+      </div>
+    </div>
+    {{/if}}
+     {{#if admin}}
+    <div class="profile-section" onclick="changeSection(1)">
+      <p>
+        <a href="/admin/dashboard" style="font-size: 17.5px;">
+       Quản lý admin
+      </a>
+      </p>
+      <div class="vertical-line-animate">
+
+      </div>
+    </div>
+    {{/if}}
+    {{/if}}
+  </div>
+
+  <div class="container-3">
+
+    <div class="current-section-content section-content">
+      {{#with user}}
+
+      <form action="/users/profile/update-infos" method="post" id="general-infomation-form--section" onclick="updateInfos(event)">
+
+        <div class="grid-info">
+          <div class="input-container">
+            <input type="text" id="username-input" name="fullname" value="{{name}}" required />
+            <div>
+            </div>
+            <p>
+              Họ và tên
+            </p>
+          </div>
+
+          <div class="input-container">
+
+            <input type="date" id="dob-input" name="dob" value="{{dob}}" required />
+            <div>
+            </div>
+            <p>
+              Ngày sinh
+            </p>
+          </div>
+
+          <div class="input-container">
+
+            <input type="email" id="email-input" name="email" value="{{email}}" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Email không hợp lệ!" required />
+            <div>
+            </div>
+            <p>
+              Email
+            </p>
+
+          </div>
+
+          <div class="input-container">
+            <input type="password" id="password-input" name="password" value="" placeholder="Nhập mật khẩu mới..." pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Mật khẩu phải gồm ít nhất 1 chữ cái thường, 1 in hoa, 1 chữ số, 1 kí tự đặc biệc và 8 kí tự." />
+            <div>
+            </div>
+            <p>
+              Mật khẩu mới
+            </p>
+          </div>
+          {{#if writer}}
+          <div class="input-container special-input-container">
+            <input type="text" id="pseudonym-input" name="pseudonym" placeholder="Bút danh" value="{{pseudonym}}" />
+            <div>
+            </div>
+            <p>
+              Bút danh
+            </p>
+          </div>
+          {{/if}}
+          {{#if editor}}
+          <div class="input-container special-input-container">
+            <input type="text" id="category-management" name="managementCategory" value="{{categoryName}}" readonly />
+            <div>
+            </div>
+            <p>
+              Chuyên mục quản lý
+            </p>
+          </div>
+          {{/if}}
+
+        </div>
+
+        <button type="submit" onclick="submitInfomations()">
+          Lưu thay đổi
+        </button>
+      </form>
+      {{/with}}
+    </div>
+
+    {{#if writer}}
+    <!-- Cac bai viet cua toi -->
+    <div class="section-content">
+      <div class="list-of-content">
+        <ul>
+          <li onclick="changeIndexOfContent(1, 0)">
+            <div>Bài viết nháp</div>
+            <div>
+              <img src="/img/icons/info.png" alt="" class="info-img" />
+              <div class="note-item">
+                Danh sách bài viết nháp
+              </div>
+            </div>
+          </li>
+          <li onclick="changeIndexOfContent(1, 1)">
+            <div>Bị từ chối</div>
+            <div>
+              <img src="/img/icons/info.png" alt="" class="info-img" />
+              <div class="note-item">
+                Danh sách bài viết đã bị từ chối
+              </div>
+            </div>
+          </li>
+          <li onclick="changeIndexOfContent(1, 2)">
+            <div>Chưa được duyệt</div>
+            <div>
+              <img src="/img/icons/info.png" alt="" class="info-img" />
+              <div class="note-item">
+                Danh sách bài viết chưa được kiểm duyệt
+              </div>
+            </div>
+          </li>
+          <li onclick="changeIndexOfContent(1, 3)">
+            <div>Đã được duyệt</div>
+            <div>
+              <img src="/img/icons/info.png" alt="" class="info-img" />
+              <div class="note-item">
+                Danh sách bài viết đã được kiểm duyệt bao gồm cả xuất bản
+              </div>
+            </div>
+          </li>
+
+        </ul>
+        <div style="background: none; text-align: center; padding-top: 3em;">
+          <a type="button" href="/users/writer/editor" style="background: skyblue; padding: 1em 2em; border-radius: 5px;">Tạo
+            bài viết mới</a>
+        </div>
+
+      </div>
+      <div class="list-of-article">
+        <!-- Nhap -->
+        <div class="list-of-article--container">
+          {{#each draftedPosts}}
+          <div class="article-container">
+            <a href="/users/writer/editor?draftId={{id}}">
+              {{#if thumbnailUrl}}
+              <img src="{{thumbnailUrl}}" alt="{{title}}" />
+              {{else}}
+              <img src="/img/post/default.jpg" alt="Bạn chưa thêm ảnh Thumbnail" />
+              {{/if}}
+            </a>
+            <div class="article-content">
+              <div class="article-content--top">
+                <div class="article-content--tilte">
+                  <a href="/users/writer/editor?draftId={{id}}">{{title}}</a>
+                </div>
+                <div class="article-content--category">
+                  {{#each Categories}}
+                  <a href="/posts?category={{id}}">{{title}}</a>
+                  {{/each}}
+                </div>
+                <form action="/users/writer/removeDraft" method="post" class="remove-draft">
+                  <input type="number" name="draftId" id="draftId" value="{{id}}" hidden>
+                  <button>
+                    &#10006;
+                  </button>
+                </form>
+              </div>
+              <div class="article-content--abstract">
+                <a href="/users/writer/editor?draftId={{id}}">{{summary}}</a>
+              </div>
+              <div class="article-content--tag">
+                {{#each Tags}}
+                <a href="/posts?tag={{id}}">{{title}}</a>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+          {{/each}}
+
+        </div>
+
+        <!-- Bi tu choi -->
+        <div class="list-of-article--container">
+          {{#each rejectedPosts}}
+          <div class="article-container">
+            <a href="/users/writer/editor?rejectedId={{id}}">
+              {{#if thumbnailUrl}}
+              <img src="{{thumbnailUrl}}" alt="{{title}}" />
+              {{else}}
+              <img src="/img/post/default.jpg" alt="Bạn chưa thêm ảnh Thumbnail" />
+              {{/if}}
+            </a>
+            <div class="article-content">
+              <div class="article-content--top">
+                <div class="article-content--tilte">
+                  <a href="/users/writer/editor?rejectedId={{id}}">{{title}}</a>
+                </div>
+                <div class="article-content--category">
+                  {{#each Categories}}
+                  <a href="/posts?category={{id}}">{{title}}</a>
+                  {{/each}}
+                </div>
+              </div>
+              <div class="article-content--abstract">
+                <a href="/users/writer/editor?rejectedId={{id}}">{{summary}}</a>
+              </div>
+              <div class="article-content--tag">
+                {{#each Tags}}
+                <a href="/posts?tag={{id}}">{{title}}</a>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+
+        <!-- Chua duoc duyet -->
+        <div class="list-of-article--container">
+          {{#each unappPosts}}
+          <div class="article-container">
+            <a href="/users/writer/editor?unappId={{id}}">
+              {{#if thumbnailUrl}}
+              <img src="{{thumbnailUrl}}" alt="{{title}}" />
+              {{else}}
+              <img src="/img/post/default.jpg" alt="Bạn chưa thêm ảnh Thumbnail" />
+              {{/if}}
+            </a>
+            <div class="article-content">
+              <div class="article-content--top">
+                <div class="article-content--tilte">
+                  <a href="/users/writer/editor?unappId={{id}}">{{title}}</a>
+                </div>
+                <div class="article-content--category">
+                  {{#each Categories}}
+                  <a href="/posts?category={{id}}">{{title}}</a>
+                  {{/each}}
+                </div>
+              </div>
+              <div class="article-content--abstract">
+                <a href="/users/writer/editor?unappId={{id}}">{{summary}}</a>
+              </div>
+              <div class="article-content--tag">
+                {{#each Tags}}
+                <a href="/posts?tag={{id}}">{{title}}</a>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+
+        <!-- Da duoc duyet -->
+        <div class="list-of-article--container">
+          {{#each appPosts}}
+          <div class="article-container">
+            <a href="/users/writer/approvedPost?id={{id}}">
+              {{#if thumbnailUrl}}
+              <img src="{{thumbnailUrl}}" alt="{{title}}" />
+              {{else}}
+              <img src="/img/post/default.jpg" alt="Bạn chưa thêm ảnh Thumbnail" />
+              {{/if}}
+            </a>
+            <div class="article-content">
+              <div class="article-content--top">
+                <div class="article-content--tilte">
+                  <a href="/users/writer/approvedPost?id={{id}}">{{title}}</a>
+                </div>
+                <div class="article-content--category">
+                  {{#each Categories}}
+                  <a href="/posts?category={{id}}">{{title}}</a>
+                  {{/each}}
+                </div>
+              </div>
+              <div class="article-content--abstract">
+                <a href="/users/writer/approvedPost?id={{id}}">{{summary}}</a>
+              </div>
+              <div class="article-content--tag">
+                {{#each Tags}}
+                <a href="/posts?tag={{id}}">{{title}}</a>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if editor}}
+    <!-- EDITOR - REVIEW -->
+    <div class="section-content" id="censorship-section">
+      <div class="list-of-content">
+        <ul>
+          <li onclick="changeIndexOfContent(1, 0)">
+            <div>
+              Chưa kiểm duyệt
+            </div>
+            <div>
+              <img src="/img/icons/info.png" alt="" class="info-img" />
+              <div class="note-item">
+                Danh sách bài viết chưa kiểm duyệt
+              </div>
+            </div>
+          </li>
+          <li onclick="changeIndexOfContent(1, 1)">
+            <div>
+              Đã duyệt
+            </div>
+            <div>
+              <img src="/img/icons/info.png" alt="" class="info-img" />
+              <div class="note-item">
+                Danh sách bài viết đã mình kiểm duyệt thành công.
+              </div>
+            </div>
+          </li>
+
+          <li onclick="changeIndexOfContent(1, 2)">
+            <div>
+              Đã từ chối
+            </div>
+            <div>
+              <img src="/img/icons/info.png" alt="" class="info-img" />
+              <div class="note-item">
+                Danh sách bài viết mà mình đã từ chối
+              </div>
+            </div>
+          </li>
+
+          <li onclick="changeIndexOfContent(1, 3)">
+            <div>
+              Danh sách nháp
+            </div>
+            <div>
+              <img src="/img/icons/info.png" alt="" class="info-img" />
+              <div class="note-item">
+                Danh sách bài viết nháp nằm trong chuyên mục mình quản lý
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="list-of-article">
+        <!-- Danh sach chua duyet -->
+        <div class="list-of-article--container">
+          {{#each yetUnapprovedPosts}}
+          <div class="article-container">
+            <a href="/users/editor/review?id={{id}}">
+              <img src="{{thumbnailUrl}}" alt="" />
+            </a>
+
+            <div class="article-content">
+              <div class="article-content--top">
+                <div class="article-content--tilte">
+                  <a href="/users/editor/review?id={{id}}">{{title}}</a>
+                </div>
+                <div class="article-content--author">
+                  Được đăng bởi: <b>{{User.pseudonym}}</b>
+                </div>
+              </div>
+
+              <div class="article-content--abstract">
+                <a href="/users/editor/review?id={{id}}">{{summary}}</a>
+              </div>
+              <div class="article-content--tag">
+                {{#each tags}}
+                <a href="/posts?tag={{id}}">{{title}}</a>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+          {{/each}}
+
+        </div>
+
+        <!-- Danh sach da duoc duyêt -->
+        <div class="list-of-article--container">
+          {{#each approvedPosts}}
+          <div class="article-container">
+            <a href="/users/editor/approved?id={{id}}">
+              <img src="{{thumbnailUrl}}" alt="" />
+            </a>
+
+            <div class="article-content">
+              <div class="article-content--top">
+                <div class="article-content--tilte">
+                  <a href="/users/editor/approved?id={{id}}">{{title}}</a>
+                </div>
+                <div class="article-content--author">
+                  Được đăng bởi: <b>{{User.pseudonym}}</b>
+                </div>
+              </div>
+              <div class="article-content--abstract">
+                <a href="/users/editor/approved?id={{id}}">{{summary}}</a>
+              </div>
+              <div class="article-content--tag">
+                {{#each tags}}
+                <a href="/posts?tag={{id}}">{{title}}</a>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+          {{/each}}
+
+        </div>
+
+        <!-- Danh sach tu choi -->
+        <div class="list-of-article--container">
+          {{#each deniedPosts}}
+          <div class="article-container">
+            <a href="/users/editor/denied?id={{id}}">
+              <img src="{{thumbnailUrl}}" alt="" />
+            </a>
+            <div class="article-content">
+              <div class="article-content--top">
+                <div class="article-content--tilte">
+                  <a href="/users/editor/denied?id={{id}}">{{title}}</a>
+                </div>
+                <div class="article-content--author">
+                  Được đăng bởi: <b>{{User.pseudonym}}</b>
+                </div>
+              </div>
+              <div class="article-content--abstract">
+                <a href="/users/editor/denied?id={{id}}">{{summary}}</a>
+              </div>
+              <div class="article-content--tag">
+                {{#each tags}}
+                <a href="/posts?tag={{id}}">{{title}}</a>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+
+        <!-- Danh sach nhap -->
+        <div class="list-of-article--container">
+          {{#each draftedPosts}}
+          <div class="article-container">
+            <a href="/users/editor/draft?id={{id}}">
+              {{#if thumbnailUrl}}
+              <img src="{{thumbnailUrl}}" alt="{{title}}" />
+              {{else}}
+              <img src="/img/post/default.jpg" alt="Người dùng chưa thêm nháp" />
+              {{/if}}
+            </a>
+
+            <div class="article-content">
+              <div class="article-content--top">
+                <div class="article-content--tilte">
+                  <a href="/users/editor/draft?id={{id}}">{{title}}</a>
+                </div>
+                <div class="article-content--author">
+                  Được đăng bởi: <b>{{User.pseudonym}}</b>
+                </div>
+              </div>
+              <div class="article-content--abstract">
+                <a href="/users/editor/draft?id={{id}}">{{summary}}</a>
+              </div>
+              <div class="article-content--tag">
+                {{#each tags}}
+                <a href="/posts?tag={{id}}">{{title}}</a>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+          {{/each}}
+
+        </div>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+
+  <div style="padding: 50px;">
+  </div>
+
+  {{#if rejectPost}}
+  <div class="alert success">
+    <span class="closebtn">&times;</span>
+    {{{rejectPost}}}
+  </div>
+  {{/if}}
+  {{#if failedMessage}}
+  <div class="alert warning">
+    <span class="closebtn">&times;</span>
+    {{{failedMessage}}}
+  </div>
+  {{/if}}
+
+  {{#if successMessage}}
+  <div class="alert success">
+    <span class="closebtn">&times;</span>
+    {{{successMessage}}}
+  </div>
+  {{/if}}
+</main>
+<script>
+  var close = document.getElementsByClassName("closebtn"); var i; for (i = 0; i
+    < close.length; i++) {
+    close[i].onclick = function () {
+      var div =
+        this.parentElement; div.style.opacity = "0"; setTimeout(function () {
+          div.style.display = "none";
+        }, 600);
+    }
+  }
+</script>
+
+</main>
+<script src="/js/profile.js"></script>

@@ -1,0 +1,325 @@
+{{> bootstrap-lib }}
+<main class="container">
+  <div class="d-flex" id="wrapper">
+    {{> admin-nav}}
+
+
+    <div id="page-content-wrapper" class="w-75">
+      <div class="container-fluid px-md-5 px-0 m-5">
+        <div class="row g-4 my-2">
+          <div class="col-md-4">
+            <h2 class="text-dark fw-bold fs-2 text-uppercase text-nowrap">
+              Chuyên mục
+            </h2>
+          </div>
+
+          <div class="offset-md-4 col-md-4">
+            <!-- Button trigger modal -->
+
+            <button type="button" class="btn btn-primary text-nowrap text-dark" data-bs-toggle="modal"
+              data-bs-target="#addCategoryModal">
+              <i class="fa-solid fa-plus text-dark"></i>
+              Thêm chuyên mục
+            </button>
+          </div>
+        </div>
+
+        <div class="col-lg-12 mt-4">
+          <div class="row">
+            <div class="col-md-8">
+              <div class="posts-search form-outline">
+                <form class="d-flex" action="/admin/categories" method="GET">
+                  <input class="form-control outline-primary" type="search" name="keyword" id="keywordInput"
+                    placeholder="Search" {{#if keyword}} value="{{keyword}}" {{/if}} required>
+                  <button class="btn btn-outline-primary"><i class="fa fa-search"></i></button>
+                </form>
+
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="btn-group">
+                <button type="button" class="btn btn-outline-info dropdown-toggle text-primary"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+                  Category level: {{categoryLevel}}
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{{originalUrl}}&level=parent">Parent</a></li>
+                  <li><a class="dropdown-item" href="{{originalUrl}}&level=child">Child</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {{#if adminSuccessMessage}}
+        <div class="alert alert-success" role="alert">
+          {{adminSuccessMessage}}
+        </div>
+        {{/if}}
+
+        <div class="row g-4 my-2">
+          <div class="col">
+            {{#each manageCategories }}
+            <div class="card border-primary mb-3">
+              <div class="card-body">
+                <span class="card-text fw-bold">{{#if parentCategory}}
+                  {{parentCategory.title}} >
+                  {{/if}} {{title}}</span>
+
+                <button class="bg-transparent remove-category text-danger float-end mx-2"
+                  data-bs-whatever="Xoa id{{id}}" data-bs-id="{{id}}" data-bs-title="{{title}}">
+                  <i class="bi bi-trash-fill"></i>
+                  Xóa
+                </button>
+                <button data-bs-toggle="modal" data-bs-target="#editCategoryModal"
+                  class="bg-transparent text-info float-end mx-2" data-bs-whatever="Chinh sua id{{id}}"
+                  data-bs-id="{{id}}" data-bs-title="{{title}}">
+                  <i class=" fa-solid fa-pen"></i>
+                  Sửa
+                </button>
+                <a href="/posts?category={{id}}" id='category-{{id}}' class="text-primary float-end mx-2">Xem chi
+                  tiết</a>
+              </div>
+            </div>
+            {{/each}}
+
+          </div>
+
+          <div class="col-lg-12">
+            <nav aria-label="Page navigation example" id="pagination">
+              {{{createPagination pagination paginationClass='pagination justify-content-center' leftText='Previous'
+              rightText='Next'}}}
+            </nav>
+          </div>
+        </div>
+
+
+        <!-- Modal for Edit category -->
+        <div class="modal fade" id="editCategoryModal" tabindex="-1"
+          aria-labelledby="editCategoryModalCenteredScrollableTitle" style="display: none" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header text-center">
+                <h1 class="modal-title fs-5" id="editCategoryModalCenteredScrollableTitle">
+                  Cập nhật chuyên mục
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form action="/admin/categories" method="get" onsubmit='updateCategory(event)'>
+                <div class="modal-body">
+                  <p class="my-3">Id chuyên mục</p>
+                  <div class="input-group my-4">
+
+                    <input type="text" disabled class="form-control text-secondary categoryId" />
+
+                  </div>
+
+                  <p class="mt-5">Nhập tên mới cho chuyên mục</p>
+                  <div class="input-group mb-5">
+                    <input type="text" class="form-control newName" placeholder="Tên mới cho chuyên mục"
+                      aria-label="Tên chuyên mục mới" required />
+                  </div>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-danger">
+                    Cập nhật
+                  </button>
+
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Hủy
+                  </button>
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal for Add category -->
+      <div class="modal fade" id="addCategoryModal" tabindex="-1"
+        aria-labelledby="addCategoryModalCenteredScrollableTitle" style="display: none" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header text-center">
+              <h1 class="modal-title fs-5" id="addCategoryModalCenteredScrollableTitle">
+                Thêm chuyên mục
+              </h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/admin/categories" method="get" onsubmit='addCategory(event)'>
+              <div class="modal-body">
+                <p class="my-3">Chọn chuyên mục cha</p>
+                <div class="input-group my-4">
+                  <select class="form-select" id="parentCategorySelect">
+                    <option selected value=-1>Trống (Chuyên mục mới sẽ là 1 chuyên mục cha)</option>
+                  </select>
+                </div>
+
+                <p class="mt-5">Nhập tên mới cho chuyên mục</p>
+                <div class="input-group mb-5">
+                  <input type="text" class="form-control newName" placeholder="Tên mới cho chuyên mục"
+                    aria-label="Tên chuyên mục mới" required />
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-danger">
+                  Thêm
+                </button>
+
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                  Hủy
+                </button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 my-2">
+        <div class="col-md-3"></div>
+
+        <div class="col-md-3"></div>
+      </div>
+    </div>
+  </div>
+  </div>
+</main>
+
+{{> footer}}
+
+<script>
+  const addCategoryModal = document.getElementById('addCategoryModal')
+
+  fetch('/admin/categories/parent').then(response => response.json())
+    .then(data => {
+      if (addCategoryModal) {
+        const parentCategorySelect = addCategoryModal.querySelector('.modal-body #parentCategorySelect')
+        let str = ''
+        data.forEach(e => {
+          str += `<option value="${e.id}">${e.title}</option>`
+        })
+        parentCategorySelect.innerHTML += str
+      }
+    });
+
+  document.querySelectorAll(".remove-category").forEach((item) =>
+    item.addEventListener("click", (e) => {
+      const categoryId = e.target.getAttribute('data-bs-id')
+      const categoryTitle = e.target.getAttribute('data-bs-title')
+      if (confirm(`Bạn có chắc chắn muốn xóa chuyên mục '${categoryTitle}' với id ${categoryId}?`)) {
+        const requestOptions = {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: categoryId })
+        };
+        fetch('/admin/categories', requestOptions)
+          .then(response => response.json())
+          .then(data => {
+            alert(data.message)
+            if (data.success === true) {
+              e.target.parentElement.parentElement.remove();
+              setTimeout(() => location.reload(), 1000)
+            }
+          });
+
+      }
+
+    })
+  );
+
+  document.querySelectorAll('#pagination li').forEach((li) => {
+    li.classList.add('page-item')
+  })
+  document.querySelectorAll('#pagination a').forEach((a) => {
+    a.classList.add('page-link')
+  })
+
+  const editCategoryModal = document.getElementById('editCategoryModal')
+  if (editCategoryModal) {
+    editCategoryModal.addEventListener('show.bs.modal', event => {
+      // Button that triggered the modal
+      const button = event.relatedTarget
+      // Extract info from data-bs-* attributes
+      const recipient = button.getAttribute('data-bs-whatever')
+      const categoryId = button.getAttribute('data-bs-id')
+      const categoryTitle = button.getAttribute('data-bs-title')
+      // If necessary, you could initiate an Ajax request here
+      // and then do the updating in a callback.
+
+      // Update the modal's content.
+      const modalTitle = editCategoryModal.querySelector('.modal-title')
+      const modalBodyInput = editCategoryModal.querySelector('.modal-body input.newName')
+      const modalCategoryId = editCategoryModal.querySelector('.modal-body .categoryId')
+
+      modalCategoryId.value = categoryId
+      modalTitle.textContent = `Chỉnh sửa chuyên mục ${categoryTitle}`
+    })
+  }
+
+  function updateCategory(e) {
+    e.preventDefault();
+    const modalBodyInput = editCategoryModal.querySelector('.modal-body input.newName')
+    const modalCategoryId = editCategoryModal.querySelector('.modal-body .categoryId')
+    const newName = modalBodyInput.value
+    const categoryId = modalCategoryId.value
+
+    if (newName === "") {
+      modalBodyInput.setCustomValidity('Username should only contain lowercase letters. e.g. john');
+      modalBodyInput.checkValidity();
+    }
+
+    console.log({ id: categoryId, newName })
+    const requestOptions = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: modalCategoryId.value, newName: modalBodyInput.value })
+    };
+    fetch('/admin/categories', requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message)
+        if (data.success === true) {
+          setTimeout(() => location.reload(), 1000)
+        }
+      });
+    editCategoryModal.querySelector('[data-bs-dismiss="modal"]').click()
+
+  }
+
+  function addCategory(e) {
+    e.preventDefault();
+    const parentCategorySelect = addCategoryModal.querySelector('.modal-body #parentCategorySelect')
+    const modalNewname = addCategoryModal.querySelector('.modal-body .newName')
+    const parentId = parentCategorySelect.value
+    const newName = modalNewname.value
+
+    console.log({ parentId, newName })
+
+    if (newName.length <= 3) {
+      alert('Tên chuyên mục phải dài hơn 3 kí tự');
+    }
+    else {
+      console.log({ parentId, title: newName })
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ parentId, title: newName })
+      };
+      fetch('/admin/categories', requestOptions)
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message)
+          if (data.success === true) {
+            setTimeout(() => location.reload(), 1000)
+          }
+
+        });
+    }
+
+    modalNewname.value = ""
+    parentCategorySelect.value = 0
+    addCategoryModal.querySelector('[data-bs-dismiss="modal"]').click()
+  }
+</script>

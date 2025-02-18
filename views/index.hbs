@@ -1,0 +1,347 @@
+<link rel="stylesheet" href="/css/index.css" />
+
+<main>
+    <div>
+        <div>
+            <p id="today"></p>
+            <h1 id="company-name">
+                Tòa soạn Báo mới Việt Nam
+            </h1>
+            <form action="/posts/search" method="get" id="seaching-form">
+                <div>
+                    <input type="search" placeholder="Nhập từ khóa..." name="keyword" id="search-input" required>
+                    {{!-- <div id="recommended-keywords--container">
+                        <a href="#" class="recommended-keyword">Chính trị hôm nay</a>
+                        <a href="#" class="recommended-keyword">Số ca COVID tăng</a>
+                        <a href="#" class="recommended-keyword">Năng lượng tích cực</a>
+                        <a href="#" class="recommended-keyword">Khám phá Việt Nam</a>
+                        <a href="#" class="recommended-keyword">Khám phá thế giới</a>
+                    </div> --}}
+                </div>
+
+                <button>
+                    Tìm kiếm
+                </button>
+            </form>
+        </div>
+
+        <!-- Widget weather -->
+        <div style="width: 50%;" class="tomorrow" data-location-id="" data-language="VI" data-unit-system="METRIC"
+            data-skin="light" data-widget-type="aqiMini" style="padding-bottom:22px;position:relative;">
+            <a href="https://www.tomorrow.io/weather-api/" rel="nofollow noopener noreferrer" target="_blank"
+                style="position: absolute; bottom: 0; transform: translateX(-50%); left: 50%;">
+                <img alt="Powered by the Tomorrow.io Weather API"
+                    src="https://weather-website-client.tomorrow.io/img/powered-by.svg" width="250" height="18" />
+            </a>
+        </div>
+
+    </div>
+
+    <div class="title-news" id="featured">
+        <p>Các bài báo nổi bật tuần qua</p>
+        <div>
+
+        </div>
+    </div>
+
+    <div class="carousel">
+        <button class="carousel_button carousel_button--left" onclick="prevSlide()">
+            <i class='fas fa-angle-left'></i>
+        </button>
+        {{!-- Begin Carousel --}}
+        <div class="carousel_track-container">
+            <ul class="carousel_track">
+                {{#each hotPosts}}
+                <li class="carousel_slide current-carousel_slide">
+
+                    <a href="/posts/{{id}}">
+
+                        <img class="carousel_image" src="{{thumbnailUrl}}" alt="">
+                        <div class="carousel_abstract">
+
+                            <h3 class="carousel_abstract--title">
+                                {{title}}
+
+                            </h3>
+                            <div class="carousel_abstract-small-container">
+                                <div>
+                                    <p class="carousel_abstract-date-post">
+                                        Ngày đăng: <span class="carousel_abstract-date"> {{ convertToVietnameseDateTime
+                                            publishedAt }} </span>
+                                    </p>
+                                    <p class="carousel_abstract--category">
+                                        <span class="carousel_abstract-level1">
+                                            <a href="/posts?category={{parentCategory.id}}">
+                                                {{parentCategory.title}}
+                                            </a>
+                                        </span>
+                                        <span style="opacity:0.5;">&#x25CF;</span>
+                                        <span class="carousel_abstract-level2">
+                                            <a href="/posts?category={{childCategory.id}}">
+                                                {{childCategory.title}}
+                                            </a>
+                                        </span>
+                                    </p>
+                                </div>
+                                {{#if isPremium}}
+                                <div class="subscriber">
+                                    <img src="/img/icons/subscriber.png" alt="" class="icon-subscriber">
+                                </div>
+                                {{else}}
+                                <div></div>
+                                {{/if}}
+                            </div>
+
+
+                            <p class="carousel_abstract--abstract">
+                                {{summary}}
+                            </p>
+
+                        </div>
+                    </a>
+
+                </li>
+                {{/each}}
+
+        </div>
+        {{!-- End Carousel --}}
+        <button class="carousel_button carousel_button--right" onclick="nextSlide()">
+            <i class='fas fa-angle-right'></i>
+        </button>
+        <div class="carousel_nav">
+            <button class="carousel_indicator current-indicator" onclick="clickIndicators(0)"></button>
+            <button class="carousel_indicator" onclick="clickIndicators(1)"></button>
+            <button class="carousel_indicator" onclick="clickIndicators(2)"></button>
+            <button class="carousel_indicator" onclick="clickIndicators(3)"></button>
+            <button class="carousel_indicator" onclick="clickIndicators(4)"></button>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="row_flex" id="container-1">
+            <div class="new-container big-container">
+
+                <div class="title-news" id="new">
+                    <p>Báo mới</p>
+                    <div>
+
+                    </div>
+                </div>
+
+                {{#each newPosts}}
+                <div class="new__article__container big__article__container">
+                    <div class="new__article__abstract big__article__abstract">
+                        <div class="new__article__abstract big__article__abstract-title">
+                            <a href="/posts/{{id}}"
+                                class="new__article__abstract-title_link big__article__abstract-title_link">
+                                {{title}}
+                            </a>
+                        </div>
+                        <div class="new__article__abstract-content big__article__abstract-content">
+                            <a href="/posts/{{id}}"
+                                class="new__article__abstract-content_link big__article__abstract-content_link">
+                                {{summary}}
+                            </a>
+                        </div>
+                        <div class="new__article____abstract-category_time big__article____abstract-category_time">
+                            <div> <a href="/posts?category={{parentCategory.id}}">{{parentCategory.title}}</a><span
+                                    style="opacity:0.5;">&#x25CF;</span>
+                                <a href="/posts?category={{childCategory.id}}">{{childCategory.title}}</a>
+                            </div>
+                            <p>{{ convertToVietnameseDateTime publishedAt }}</p>
+                        </div>
+                         {{#if isPremium}}
+                                <div class="subscriber">
+                                    <img src="/img/icons/subscriber.png" alt="" class="icon-subscriber">
+                                </div>
+                                {{else}}
+                                <div></div>
+                                {{/if}}
+                    </div>
+                    <a href="/posts/{{id}}" class="new__article__img big__article__img">
+                        <img src="{{thumbnailUrl}}" alt="{{title}}">
+                    </a>
+                </div>
+                <div class="horizontial__line"></div>
+                {{/each}}
+
+            </div>
+
+            <div class="vertical__line vertical__line-light"></div>
+
+            <div class="hot-container">
+                <div class="title-news" id="view">
+                    <p>Xem nhiều</p>
+                    <div>
+
+                    </div>
+                </div>
+                {{#each mostViewPosts}}
+                <div class="mini__article__container">
+                    <div class="mini__article__abstract">
+                        <div class="mini__article__title">
+                            <a href="/posts/{{id}}" class="mini__article-link">
+                                {{title}}
+                            </a>
+
+                        </div>
+                        <div class="mini__article__content">
+                            <a href="/posts/{{id}}" class="mini__article-link">
+                                {{summary}}
+                            </a>
+                        </div>
+
+                        <div class="mini__article__bottom">
+                            <div> <a href="/posts?category={{childCategory.id}}">{{childCategory.title}}</a> <span
+                                    style="opacity:0.5;">&#x25CF;</span><a
+                                    href="/posts?category={{parentCategory.id}}">{{parentCategory.title}}</a></div>
+                            <p class="">{{ convertToVietnameseDateTime publishedAt }}</p>
+                        </div>
+                    </div>
+
+                    <div class="mini__article__img__container">
+                        <a href="/posts/{{id}}" class="mini__article-link">
+                            <img src="{{thumbnailUrl}}" alt="">
+                        </a>
+                        {{#if isPremium}}
+                        <div class="subscriber">
+                            <img src="/img/icons/subscriber.png" alt="" class="icon-subscriber">
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="horizontial__line"></div>
+                {{/each}}
+            </div>
+        </div>
+
+        <div class="horizontial__line horizontial__line-bold">
+        </div>
+        <div>
+
+            <div class="title-news" id="category">
+                <p>Chuyên mục</p>
+                <div>
+                </div>
+            </div>
+
+            <div class="row_flex" id="container-2">
+                <div class="category-container big-container">
+                    {{#each leftCategoryPosts}}
+                    <div class="category__article__container big__article__container">
+                        <div class="category__article__abstract big__article__abstract">
+                            <div class="category__article__abstract big__article__abstract-title">
+                                <a href="/posts/{{Post.id}}"
+                                    class="category__article__abstract-title_link big__article__abstract-title_link">
+                                    {{Post.title}}
+                                </a>
+                            </div>
+                            <div class="category__article__abstract-content big__article__abstract-content">
+                                <a href="/posts/{{Post.id}}"
+                                    class="category__article__abstract-content_link big__article__abstract-content_link">
+                                    {{Post.summary}}
+                                </a>
+                            </div>
+                            <div
+                                class="category__article____abstract-category_time big__article____abstract-category_time">
+                                <a href="/posts?category={{id}}">{{title}}</a>
+                                <p>{{ convertToVietnameseDateTime Post.publishedAt }}</p>
+                            </div>
+                            {{#if isPremium}}
+                                <div class="subscriber">
+                                    <img src="/img/icons/subscriber.png" alt="" class="icon-subscriber">
+                                </div>
+                                {{else}}
+                                <div></div>
+                            {{/if}}
+                        </div>
+                        <a href="/posts/{{Post.id}}" class="category__article__img big__article__img">
+                            <img src="{{Post.thumbnailUrl}}" alt="{{Post.title}}">
+                        </a>
+                    </div>
+                    <div class="horizontial__line"></div>
+                    {{/each}}
+                </div>
+
+                <div class="vertical__line vertical__line-light"></div>
+
+                <div class="category-container2">
+                    {{#each rightCategoryPosts}}
+                    <div class="medium__article-container">
+                        <a href="/posts/{{Post.id}}">
+                                {{#if isPremium}}
+                                <div class="subscriber">
+                                    <img src="/img/icons/subscriber.png" alt="" class="icon-subscriber">
+                                </div>
+                                {{/if}}
+                            <img src="{{Post.thumbnailUrl}}" alt="">
+                        </a>
+                        <div class="medium__article-abstract">
+                            <a href="/posts/{{Post.id}}" class="medium__article-abstract-title">
+                                {{Post.title}}
+                            </a>
+                            <a href="/posts/1" class="medium__article-abstract-summary">
+                                {{Post.summary}}
+                            </a>
+                            <div class="medium__article-category_time">
+                                <a href="/posts?category={{id}}">
+                                    {{title}}
+                                </a>
+                                <p>
+                                    {{ convertToVietnameseDateTime Post.publishedAt }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                <div>
+
+                </div>
+            </div>
+
+            <div class="horizontial__line horizontial__line-bold">
+            </div>
+        </div>
+
+
+        <div id="top__bottom-container">
+            <a href="#top">
+                <img src="/img/icons/to-top.png" alt="" id="to_top">
+            </a>
+            <a href="#bottom">
+                <img src="/img/icons/to-bottom.png" alt="" id="to_bottom">
+            </a>
+        </div>
+
+        <div id="table-of-content">
+            <ul>
+                <li> <a href="#featured">Nổi bật</a> </li>
+                <li> <a href="#new">Mới nhất</a></li>
+                <li> <a href="#view">Lượt xem</a> </li>
+                <li> <a href="#category">Chuyên mục</a> </li>
+            </ul>
+        </div>
+
+        {{#if publishMessage}}
+        <div class="alert success">
+            <span class="closebtn">&times;</span>
+            {{publishMessage}}
+        </div>
+        {{/if}}
+</main>
+{{> footer }}
+<script>
+    var close = document.getElementsByClassName("closebtn");
+    var i;
+
+    for (i = 0; i < close.length; i++) {
+        close[i].onclick = function () {
+            var div = this.parentElement;
+            div.style.opacity = "0";
+            setTimeout(function () { div.style.display = "none"; }, 600);
+        }
+    }
+</script>
+<script src="/js/index.js"></script>
