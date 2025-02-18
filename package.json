@@ -4,7 +4,11 @@
   "description": "Đồ án PTUDW 20TN",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ."
+    "start": "node index.js",
+    "reset-db": "npx sequelize-cli db:drop && npx sequelize-cli db:create && npm run sync-models && npm run db-seed-all",
+    "sync-models": "node scripts/syncModels.js",
+    "db-seed-all": "npx sequelize-cli db:seed:all",
+    "db-unseed-all": "npx sequelize-cli db:seed:undo:all"
   },
   "keywords": [],
   "author": "",
@@ -33,6 +37,6 @@
     "redis": "^4.6.7",
     "sequelize": "^6.32.0",
     "sequelize-cli": "^6.6.0",
-    "tinymce": "^6.4.2"
+    "tinymce": "^7.6.1"
   }
 }
